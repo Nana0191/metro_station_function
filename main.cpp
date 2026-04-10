@@ -50,3 +50,40 @@ bool validNode(Node node)
   else
     return true;
 }
+
+bool isEdgeSafe(int start_node_idx, int target_node_idx) {
+    int x1 = metro_stations[start_node_idx].pos_x;
+    int y1 = metro_stations[start_node_idx].pos_y;
+    int x2 = metro_stations[target_node_idx].pos_x;
+    int y2 = metro_stations[target_node_idx].pos_y;
+
+    for (auto const& existing_edge : metro_stations[start_node_idx].adjacent) {
+        if (existing_edge.first == target_node_idx) {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < metro_stations.size(); i++) {
+        for (auto const& edge : metro_stations[i].adjacent) {
+
+            int x3 = metro_stations[i].pos_x;
+            int y3 = metro_stations[i].pos_y;
+            int x4 = metro_stations[edge.first].pos_x;
+            int y4 = metro_stations[edge.first].pos_y;
+
+            if ((i == start_node_idx && edge.first == target_node_idx) ||
+                (i == target_node_idx && edge.first == start_node_idx)) continue;
+
+            long long v1 = (long long)(y2 - y1) * (x3 - x2) - (long long)(x2 - x1) * (y3 - y2);
+            long long v2 = (long long)(y2 - y1) * (x4 - x2) - (long long)(x2 - x1) * (y4 - y2);
+            long long v3 = (long long)(y4 - y3) * (x1 - x4) - (long long)(x4 - x3) * (y1 - y4);
+            long long v4 = (long long)(y4 - y3) * (x2 - x4) - (long long)(x4 - x3) * (y2 - y4);
+
+            if (((v1 > 0 && v2 < 0) || (v1 < 0 && v2 > 0)) &&
+                ((v3 > 0 && v4 < 0) || (v3 < 0 && v4 > 0))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
